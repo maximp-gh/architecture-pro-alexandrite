@@ -1,0 +1,24 @@
+@startuml
+
+title Cache Aside
+
+participant MES_API as App
+entity      Cache
+database    DB
+actor       ApiUser
+
+ApiUser -> App : Get Orders
+App --> Cache : Get Orders
+alt cache hit
+    Cache -> App : Orders
+else cache miss
+    Cache --> App : Cache miss
+    App --> DB : Get Orders
+    DB -> App : Orders
+    App -> Cache: Update cache
+end
+ApiUser -> App: Update order status
+App -> DB: Update order status
+App -> Cache: invalidate cache
+
+@enduml
